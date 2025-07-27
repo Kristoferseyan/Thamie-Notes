@@ -11,6 +11,15 @@ import 'features/auth/domain/usecases/logout_usecase.dart';
 import 'features/auth/domain/usecases/get_stored_token_usecase.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 
+import 'features/notes/data/datasources/notes_remote_data_source.dart';
+import 'features/notes/data/repositories/notes_repository_impl.dart';
+import 'features/notes/domain/repositories/notes_repository.dart';
+import 'features/notes/domain/usecases/get_user_notes_usecase.dart';
+import 'features/notes/domain/usecases/create_note_usecase.dart';
+import 'features/notes/domain/usecases/update_note_usecase.dart';
+import 'features/notes/domain/usecases/delete_note_usecase.dart';
+import 'features/notes/presentation/bloc/notes_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -23,10 +32,16 @@ Future<void> init() async {
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(client: sl()),
   );
+  sl.registerLazySingleton<NotesRemoteDataSource>(
+    () => NotesRemoteDataSourceImpl(client: sl(), sharedPreferences: sl()),
+  );
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(remoteDataSource: sl(), sharedPreferences: sl()),
+  );
+  sl.registerLazySingleton<NotesRepository>(
+    () => NotesRepositoryImpl(remoteDataSource: sl()),
   );
 
   // Use cases
@@ -34,6 +49,10 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CreateUserUseCase(sl()));
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
   sl.registerLazySingleton(() => GetStoredTokenUseCase(sl()));
+  sl.registerLazySingleton(() => GetUserNotesUseCase(sl()));
+  sl.registerLazySingleton(() => CreateNoteUseCase(sl()));
+  sl.registerLazySingleton(() => UpdateNoteUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteNoteUseCase(sl()));
 
   // BLoC
   sl.registerFactory(
@@ -42,6 +61,14 @@ Future<void> init() async {
       createUserUseCase: sl(),
       logoutUseCase: sl(),
       getStoredTokenUseCase: sl(),
+    ),
+  );
+  sl.registerFactory(
+    () => NotesBloc(
+      getUserNotesUseCase: sl(),
+      createNoteUseCase: sl(),
+      updateNoteUseCase: sl(),
+      deleteNoteUseCase: sl(),
     ),
   );
 }

@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import '../../domain/entities/user.dart';
 
 class UserModel extends Equatable {
-  final int id;
   final String username;
   final String email;
   final String? firstName;
@@ -10,7 +9,6 @@ class UserModel extends Equatable {
   final String? role;
 
   const UserModel({
-    required this.id,
     required this.username,
     required this.email,
     this.firstName,
@@ -20,18 +18,16 @@ class UserModel extends Equatable {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'] ?? 0,
-      username: json['username'] ?? '',
-      email: json['email'] ?? '',
+      username: json['username'] as String,
+      email: json['email'] as String,
       firstName: json['first_name'] ?? json['firstName'],
       lastName: json['last_name'] ?? json['lastName'],
-      role: json['role'],
+      role: json['role'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'username': username,
       'email': email,
       'first_name': firstName,
@@ -42,7 +38,6 @@ class UserModel extends Equatable {
 
   User toEntity() {
     return User(
-      id: id,
       username: username,
       email: email,
       firstName: firstName,
@@ -52,5 +47,5 @@ class UserModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, username, email, firstName, lastName, role];
+  List<Object?> get props => [username, email, firstName, lastName, role];
 }

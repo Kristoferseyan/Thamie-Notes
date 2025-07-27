@@ -9,13 +9,25 @@ class AuthResponseModel extends Equatable {
   const AuthResponseModel({required this.token, this.user, this.message});
 
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) {
+    String actualToken = json['username'] ?? '';
+    String actualUsername = json['email'] ?? '';
+    String actualEmail = json['role'] ?? '';
+    String actualRole = json['token'] ?? '';
+
+    UserModel? user = UserModel(
+      username: actualUsername,
+      email: actualEmail,
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      role: actualRole,
+    );
+
     return AuthResponseModel(
-      token: json['token'] ?? '',
-      user: json['user'] != null ? UserModel.fromJson(json['user']) : null,
+      token: actualToken,
+      user: user,
       message: json['message'],
     );
   }
-
   Map<String, dynamic> toJson() {
     return {'token': token, 'user': user?.toJson(), 'message': message};
   }

@@ -7,6 +7,7 @@ import 'injection_container.dart' as di;
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event.dart';
 import 'features/auth/presentation/bloc/auth_state.dart';
+import 'features/notes/presentation/bloc/notes_bloc.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/screens/home_screen.dart';
 
@@ -25,8 +26,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => di.sl<AuthBloc>()..add(AuthCheckRequested()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => di.sl<AuthBloc>()..add(AuthCheckRequested()),
+        ),
+        BlocProvider(create: (context) => di.sl<NotesBloc>()),
+      ],
       child: MaterialApp(
         title: 'Thamie Notes',
         theme: ThemeData(

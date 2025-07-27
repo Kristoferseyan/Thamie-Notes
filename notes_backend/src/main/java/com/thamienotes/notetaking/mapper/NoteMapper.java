@@ -15,8 +15,11 @@ public class NoteMapper {
 
     public static NoteDetailsDto toDto(Notes notes){
         NoteDetailsDto dto = new NoteDetailsDto();
+        dto.setId(notes.getId());
         dto.setTitle(notes.getTitle());
         dto.setContent(notes.getContent());
+        dto.setCreatedAt(notes.getCreatedAt());
+        dto.setUpdatedAt(notes.getUpdatedAt());
         return dto;
     }
 }

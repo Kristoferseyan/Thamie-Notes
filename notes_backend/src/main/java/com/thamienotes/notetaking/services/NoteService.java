@@ -1,5 +1,8 @@
 package com.thamienotes.notetaking.services;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,5 +29,22 @@ public class NoteService {
         Notes note = NoteMapper.toEntity(dto, user);
         Notes savedNote = noteRepo.save(note);
         return NoteMapper.toDto(savedNote);
+    }
+
+    public List<NoteDetailsDto> getUserNotes(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<Notes> notes = noteRepo.findByUserUsername(auth.getName());
+        return notes.stream().map(NoteMapper::toDto).collect(Collectors.toList());
+    }
+
+    public NoteDetailsDto updateNote(String noteId, NoteDetailsDto dto){
+        Notes note = noteRepo.findById(noteId)
+                    .orElseThrow(() -> new IndexOutOfBoundsException("Id can't be found LMAO"));
+        
+        note.setTitle(dto.getTitle());
+        note.setContent(dto.getContent());
+
+        Notes updateNotes = noteRepo.save(note);
+        return NoteMapper.toDto(note);
     }
 }
