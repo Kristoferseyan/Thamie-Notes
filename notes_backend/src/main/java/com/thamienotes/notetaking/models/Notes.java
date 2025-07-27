@@ -20,10 +20,10 @@ public class Notes {
     @GeneratedValue(strategy=GenerationType.UUID)
     private String id;
     private String title;
-    private String mediumtext;
-    @Column(name="created_at",  updatable=false, insertable=false)
+    private String content;
+    @Column(name="created_at",  updatable=false)
     private LocalDateTime createdAt;
-    @Column(name="updated_at", updatable=false, insertable=false)
+    @Column(name="updated_at")
     private LocalDateTime updatedAt;
 
     @ManyToOne

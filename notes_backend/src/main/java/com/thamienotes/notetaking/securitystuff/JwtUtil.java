@@ -26,7 +26,7 @@ public class JwtUtil {
     public String generateToken(Users user){
         return Jwts.builder()
                 .subject(user.getUsername())
-                .claim("ROLE", user.getRole())
+                .claim("ROLE", "ROLE_" + user.getRole())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(key)

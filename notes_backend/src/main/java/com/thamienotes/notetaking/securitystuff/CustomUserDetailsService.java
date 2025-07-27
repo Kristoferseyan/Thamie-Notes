@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Users user = userRepo.findByUsername(username)
                     .orElseThrow(() -> new UsernameNotFoundException(username));
         
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRole()));
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
         return new User(user.getUsername(), user.getPassword(), authorities);
     }
 }
