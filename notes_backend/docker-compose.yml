@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      # Database Configuration
+      - DB_URL=jdbc:mysql://db:3306/thamienotes_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=rootpassword
+
+      # JPA Configuration
+      - JPA_DDL_AUTO=update
+      - JPA_SHOW_SQL=false
+      - JPA_FORMAT_SQL=false
+
+      # JWT Configuration - Replace with your secure secret
+      - JWT_SECRET=2245f991e5635939d9416c03aa841a7a2f502ad8cf16ccb2fe1b5606d5ccf659
+
+      # Server Configuration
+      - SERVER_PORT=8080
+
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: thamienotes_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+
+volumes:
+  mysql_data:
+
+
+networks:
+  app-network:
+    driver: bridge

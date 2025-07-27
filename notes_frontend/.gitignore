@@ -1,0 +1,145 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# 🔒 SECURITY & SENSITIVE DATA - CRITICAL TO HIDE
+# Environment variables and API keys
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+*.env
+
+# API keys and configuration files
+**/android/app/google-services.json
+**/ios/Runner/GoogleService-Info.plist
+**/ios/firebase_app_id_file.json
+**/macos/Runner/GoogleService-Info.plist
+**/lib/firebase_options.dart
+
+# Private keys and certificates
+*.key
+*.pem
+*.p12
+*.cer
+*.crt
+*.keystore
+*.jks
+
+# Local configuration
+local.properties
+keystore.properties
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# 🛠️ DEVELOPMENT FILES
+# Local development overrides
+*.local
+analysis_options_local.yaml
+
+# Generated files (auto-generated code)
+**/*.g.dart
+**/*.freezed.dart
+**/*.mocks.dart
+**/generated/
+
+# Build artifacts
+coverage/
+lcov.info
+
+# IDE and editor files
+.vscode/settings.json
+.vscode/launch.json
+.history/
+*.swp
+*.swo
+*~
+
+# macOS specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows specific
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.backup
+*.bak
+*.orig
+
+# Logs and temporary files
+logs/
+tmp/
+temp/
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Package files
+*.tar.gz
+*.tgz
+*.zip
+
+# Firebase (if you use it later)
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Flutter version management
+.fvm/
+
+# Mason (code generation)
+.mason/
+
+# Very Good CLI
+.vgv_cli/
