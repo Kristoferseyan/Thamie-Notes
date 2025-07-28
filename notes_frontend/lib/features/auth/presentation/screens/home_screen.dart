@@ -928,6 +928,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     cleaned = cleaned.replaceAllMapped(
+      RegExp(r'==(.+?)==(\{[^}]+\})?'),
+      (match) => match.group(1) ?? '',
+    );
+
+    cleaned = cleaned.replaceAllMapped(
       RegExp(r'\*\*(.*?)\*\*'),
       (match) => match.group(1) ?? '',
     );
