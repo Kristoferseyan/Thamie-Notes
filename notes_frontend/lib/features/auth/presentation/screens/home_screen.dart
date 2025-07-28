@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/theme_service.dart';
 import '../../../notes/presentation/bloc/notes_bloc.dart';
 import '../../../notes/presentation/bloc/notes_event.dart';
 import '../../../notes/presentation/bloc/notes_state.dart';
@@ -83,21 +85,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: 'Search notes...',
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: theme.colorScheme.onBackground.withOpacity(0.6),
-                        size: 20,
-                      ),
-                      fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
+                  child: Consumer<ThemeService>(
+                    builder: (context, themeService, child) {
+                      AppColors.setDarkMode(themeService.isDarkMode);
+
+                      return TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          hintText: 'Search notes...',
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: theme.colorScheme.onBackground.withOpacity(
+                              0.6,
+                            ),
+                            size: 20,
+                          ),
+                          fillColor: AppColors.surface,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
 
@@ -243,160 +253,185 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: Column(
               children: [
-                Container(
-                  height: 80,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border(
-                      bottom: BorderSide(
-                        color: theme.colorScheme.outline.withOpacity(0.1),
-                        width: 1,
+                Consumer<ThemeService>(
+                  builder: (context, themeService, child) {
+                    AppColors.setDarkMode(themeService.isDarkMode);
+
+                    return Container(
+                      height: 80,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
                       ),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.02),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            _selectedTab,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
-                            ),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        border: Border(
+                          bottom: BorderSide(
+                            color: theme.colorScheme.outline.withOpacity(0.1),
+                            width: 1,
                           ),
-                          BlocBuilder<NotesBloc, NotesState>(
-                            builder: (context, state) {
-                              return Text(
-                                '${state.notes.length} notes',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.textSecondary,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              );
-                            },
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.shadowLight,
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
-                      const Spacer(),
-
-                      Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                          color: AppColors.background,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: AppColors.primary.withOpacity(0.1),
-                            width: 1,
-                          ),
-                        ),
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.search,
-                            color: AppColors.textSecondary,
-                            size: 20,
-                          ),
-                          tooltip: 'Search notes',
-                        ),
-                      ),
-
-                      Container(
-                        margin: const EdgeInsets.only(right: 16),
-                        decoration: BoxDecoration(
-                          color: AppColors.background,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: AppColors.primary.withOpacity(0.1),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.grid_view,
-                                color: AppColors.primary,
-                                size: 18,
+                      child: Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                _selectedTab,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.textPrimary,
+                                ),
                               ),
-                              tooltip: 'Grid view',
+                            ],
+                          ),
+                          const Spacer(),
+
+                          Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            decoration: BoxDecoration(
+                              color: AppColors.background,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: AppColors.primary.withOpacity(0.1),
+                                width: 1,
+                              ),
                             ),
-                            Container(
-                              width: 1,
-                              height: 20,
-                              color: AppColors.primary.withOpacity(0.1),
-                            ),
-                            IconButton(
+                            child: IconButton(
                               onPressed: () {},
                               icon: Icon(
-                                Icons.view_list,
+                                Icons.search,
                                 color: AppColors.textSecondary,
-                                size: 18,
+                                size: 20,
                               ),
-                              tooltip: 'List view',
+                              tooltip: 'Search notes',
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
 
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [AppColors.primary, AppColors.accent],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
+                          Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            decoration: BoxDecoration(
+                              color: AppColors.background,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: AppColors.primary.withOpacity(0.1),
+                                width: 1,
+                              ),
                             ),
-                          ],
-                        ),
-                        child: ElevatedButton.icon(
-                          onPressed: () => _navigateToCreateNote(context),
-                          icon: const Icon(
-                            Icons.add,
-                            size: 18,
-                            color: Colors.white,
-                          ),
-                          label: const Text(
-                            'New Note',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 12,
+                            child: Consumer<ThemeService>(
+                              builder: (context, themeService, child) {
+                                return IconButton(
+                                  onPressed: () {
+                                    themeService.toggleTheme();
+                                  },
+                                  icon: Icon(
+                                    themeService.isDarkMode
+                                        ? Icons.light_mode
+                                        : Icons.dark_mode,
+                                    color: AppColors.textSecondary,
+                                    size: 20,
+                                  ),
+                                  tooltip: themeService.isDarkMode
+                                      ? 'Switch to light mode'
+                                      : 'Switch to dark mode',
+                                );
+                              },
                             ),
                           ),
-                        ),
+
+                          Container(
+                            margin: const EdgeInsets.only(right: 16),
+                            decoration: BoxDecoration(
+                              color: AppColors.background,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: AppColors.primary.withOpacity(0.1),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.grid_view,
+                                    color: AppColors.primary,
+                                    size: 18,
+                                  ),
+                                  tooltip: 'Grid view',
+                                ),
+                                Container(
+                                  width: 1,
+                                  height: 20,
+                                  color: AppColors.primary.withOpacity(0.1),
+                                ),
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.view_list,
+                                    color: AppColors.textSecondary,
+                                    size: 18,
+                                  ),
+                                  tooltip: 'List view',
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [AppColors.primary, AppColors.accent],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: ElevatedButton.icon(
+                              onPressed: () => _navigateToCreateNote(context),
+                              icon: const Icon(
+                                Icons.add,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                              label: const Text(
+                                'New Note',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 12,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
 
                 Expanded(child: _buildMainContent(context)),
@@ -681,172 +716,182 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildModernNoteCard(BuildContext context, Note note, int index) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.primary.withOpacity(0.08),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-          BoxShadow(
-            color: Colors.black.withOpacity(0.01),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => NoteDetailScreen(note: note),
+    return Consumer<ThemeService>(
+      builder: (context, themeService, child) {
+        AppColors.setDarkMode(themeService.isDarkMode);
+
+        return Container(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: AppColors.primary.withOpacity(0.08),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadowLight,
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-            );
-          },
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+              BoxShadow(
+                color: AppColors.shadowLight,
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NoteDetailScreen(note: note),
+                  ),
+                );
+              },
+              borderRadius: BorderRadius.circular(16),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Text(
-                        note.title.isNotEmpty ? note.title : 'Untitled',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                          height: 1.3,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    PopupMenuButton<String>(
-                      onSelected: (value) {
-                        if (value == 'edit') {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  NoteDetailScreen(note: note),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            note.title.isNotEmpty ? note.title : 'Untitled',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                              height: 1.3,
                             ),
-                          );
-                        } else if (value == 'delete') {
-                          _showDeleteConfirmation(context, note);
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          value: 'edit',
-                          child: Row(
-                            children: [
-                              Icon(Icons.edit, size: 16),
-                              SizedBox(width: 8),
-                              Text('Edit'),
-                            ],
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const PopupMenuItem(
-                          value: 'delete',
-                          child: Row(
-                            children: [
-                              Icon(Icons.delete, size: 16, color: Colors.red),
-                              SizedBox(width: 8),
-                              Text(
-                                'Delete',
-                                style: TextStyle(color: Colors.red),
+                        PopupMenuButton<String>(
+                          onSelected: (value) {
+                            if (value == 'edit') {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      NoteDetailScreen(note: note),
+                                ),
+                              );
+                            } else if (value == 'delete') {
+                              _showDeleteConfirmation(context, note);
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(
+                              value: 'edit',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.edit, size: 16),
+                                  SizedBox(width: 8),
+                                  Text('Edit'),
+                                ],
                               ),
-                            ],
+                            ),
+                            const PopupMenuItem(
+                              value: 'delete',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.delete,
+                                    size: 16,
+                                    color: Colors.red,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Delete',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: AppColors.background,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: AppColors.primary.withOpacity(0.1),
+                                width: 1,
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.more_horiz,
+                              size: 16,
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         ),
                       ],
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: AppColors.background,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    Expanded(
+                      child: Text(
+                        _cleanMarkdownForPreview(note.content),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textSecondary,
+                          height: 1.5,
+                        ),
+                        maxLines: 6,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
                             color: AppColors.primary.withOpacity(0.1),
-                            width: 1,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '${_getWordCount(note.content)} words',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.primary,
+                            ),
                           ),
                         ),
-                        child: Icon(
-                          Icons.more_horiz,
-                          size: 16,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
+                        const Spacer(),
+                        if (note.updatedAt != null || note.createdAt != null)
+                          Text(
+                            _formatDate(note.updatedAt ?? note.createdAt!),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                      ],
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 16),
-
-                Expanded(
-                  child: Text(
-                    note.content.isNotEmpty ? note.content : 'No content',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: AppColors.textSecondary,
-                      height: 1.5,
-                    ),
-                    maxLines: 6,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '${_getWordCount(note.content)} words',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    if (note.updatedAt != null || note.createdAt != null)
-                      Text(
-                        _formatDate(note.updatedAt ?? note.createdAt!),
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                  ],
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -868,6 +913,66 @@ class _HomeScreenState extends State<HomeScreen> {
   int _getWordCount(String text) {
     if (text.trim().isEmpty) return 0;
     return text.trim().split(RegExp(r'\s+')).length;
+  }
+
+  String _cleanMarkdownForPreview(String markdownText) {
+    if (markdownText.trim().isEmpty) return 'No content';
+
+    String cleaned = markdownText;
+
+    cleaned = cleaned.replaceAll(RegExp(r'```[\s\S]*?```'), ' [code] ');
+
+    cleaned = cleaned.replaceAllMapped(
+      RegExp(r'^#{1,6}\s+(.*)$', multiLine: true),
+      (match) => match.group(1) ?? '',
+    );
+
+    cleaned = cleaned.replaceAllMapped(
+      RegExp(r'\*\*(.*?)\*\*'),
+      (match) => match.group(1) ?? '',
+    );
+
+    cleaned = cleaned.replaceAllMapped(
+      RegExp(r'(?<!\*)\*([^\*\n]+?)\*(?!\*)'),
+      (match) => match.group(1) ?? '',
+    );
+    cleaned = cleaned.replaceAllMapped(
+      RegExp(r'(?<!_)_([^_\n]+?)_(?!_)'),
+      (match) => match.group(1) ?? '',
+    );
+
+    cleaned = cleaned.replaceAllMapped(
+      RegExp(r'~~(.*?)~~'),
+      (match) => match.group(1) ?? '',
+    );
+
+    cleaned = cleaned.replaceAllMapped(
+      RegExp(r'`([^`]+?)`'),
+      (match) => match.group(1) ?? '',
+    );
+
+    cleaned = cleaned.replaceAllMapped(
+      RegExp(r'\[([^\]]*)\]\([^)]*\)'),
+      (match) => match.group(1) ?? '',
+    );
+
+    cleaned = cleaned.replaceAllMapped(
+      RegExp(r'!\[([^\]]*)\]\([^)]*\)'),
+      (match) => match.group(1) ?? '',
+    );
+
+    cleaned = cleaned.replaceAll(RegExp(r'^\s*[-*+]\s+', multiLine: true), '');
+    cleaned = cleaned.replaceAll(RegExp(r'^\s*\d+\.\s+', multiLine: true), '');
+
+    cleaned = cleaned.replaceAll(RegExp(r'^\s*>\s+', multiLine: true), '');
+
+    cleaned = cleaned.replaceAll(RegExp(r'<[^>]*>'), '');
+
+    cleaned = cleaned.replaceAll(RegExp(r'\n+'), ' ');
+    cleaned = cleaned.replaceAll(RegExp(r'\s+'), ' ');
+    cleaned = cleaned.trim();
+
+    return cleaned.isNotEmpty ? cleaned : 'No content';
   }
 
   void _showDeleteConfirmation(BuildContext context, Note note) {

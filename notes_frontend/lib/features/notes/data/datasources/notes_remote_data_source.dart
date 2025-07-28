@@ -110,25 +110,68 @@ class NotesRemoteDataSourceImpl implements NotesRemoteDataSource {
 
     final body = json.encode({'title': title, 'content': content});
 
+    print('NotesDataSource: Creating note');
+    print('NotesDataSource: Create URL: $baseUrl/note/createNote');
+    print('NotesDataSource: Create Body: $body');
+    print('NotesDataSource: Create Headers: $headers');
+
     final response = await client.post(
       Uri.parse('$baseUrl/note/createNote'),
       headers: headers,
       body: body,
     );
 
+    print('NotesDataSource: Create Response Status: ${response.statusCode}');
+    print('NotesDataSource: Create Response Body: ${response.body}');
+
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final Map<String, dynamic> jsonResponse = json.decode(response.body);
+      try {
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
 
-      Map<String, dynamic> noteJson;
-      if (jsonResponse.containsKey('data')) {
-        noteJson = jsonResponse['data'] as Map<String, dynamic>;
-      } else if (jsonResponse.containsKey('note')) {
-        noteJson = jsonResponse['note'] as Map<String, dynamic>;
-      } else {
-        noteJson = jsonResponse;
+        Map<String, dynamic> noteJson;
+        if (jsonResponse.containsKey('data')) {
+          noteJson = jsonResponse['data'] as Map<String, dynamic>;
+          print('NotesDataSource: Found created note in data key');
+        } else if (jsonResponse.containsKey('note')) {
+          noteJson = jsonResponse['note'] as Map<String, dynamic>;
+          print('NotesDataSource: Found created note in note key');
+        } else {
+          noteJson = jsonResponse;
+          print('NotesDataSource: Using response as note object directly');
+        }
+
+        final createdNote = NoteModel.fromJson(noteJson);
+        print(
+          'NotesDataSource: Successfully parsed created note with ID: ${createdNote.id}',
+        );
+        return createdNote;
+      } catch (e) {
+        print('NotesDataSource: Failed to parse JSON response: $e');
+        print('NotesDataSource: Response was: ${response.body}');
+
+        if (response.body.contains('successfully') ||
+            response.body.contains('created')) {
+          print(
+            'NotesDataSource: Response indicates success but not JSON, fetching user notes to find new note',
+          );
+
+          final notes = await getUserNotes();
+          if (notes.isNotEmpty) {
+            notes.sort(
+              (a, b) => (b.createdAt ?? DateTime.now()).compareTo(
+                a.createdAt ?? DateTime.now(),
+              ),
+            );
+            final newestNote = notes.first;
+            print(
+              'NotesDataSource: Returning newest note as created note: ${newestNote.id}',
+            );
+            return newestNote;
+          }
+        }
+
+        throw Exception('Failed to parse create note response: $e');
       }
-
-      return NoteModel.fromJson(noteJson);
     } else {
       throw Exception('Failed to create note: ${response.body}');
     }

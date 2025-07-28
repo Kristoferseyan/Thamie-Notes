@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 import 'core/theme/app_colors.dart';
+import 'core/theme/app_theme.dart';
+import 'core/theme/theme_service.dart';
 import 'injection_container.dart' as di;
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event.dart';
@@ -26,169 +29,33 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return MultiProvider(
       providers: [
-        BlocProvider(
-          create: (context) => di.sl<AuthBloc>()..add(AuthCheckRequested()),
+        ChangeNotifierProvider(create: (_) => ThemeService()),
+        MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => di.sl<AuthBloc>()..add(AuthCheckRequested()),
+            ),
+            BlocProvider(create: (context) => di.sl<NotesBloc>()),
+          ],
+          child: Consumer<ThemeService>(
+            builder: (context, themeService, child) {
+              // Update AppColors with current theme
+              AppColors.setDarkMode(themeService.isDarkMode);
+
+              return MaterialApp(
+                title: 'Thamie Notes',
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
+                themeMode: themeService.themeMode,
+                home: const AuthWrapper(),
+                debugShowCheckedModeBanner: false,
+              );
+            },
+          ),
         ),
-        BlocProvider(create: (context) => di.sl<NotesBloc>()),
       ],
-      child: MaterialApp(
-        title: 'Thamie Notes',
-        theme: ThemeData(
-          colorScheme: const ColorScheme.light(
-            primary: AppColors.primary,
-            secondary: AppColors.accent,
-            tertiary: AppColors.accent,
-            surface: AppColors.surface,
-            background: AppColors.background,
-            onPrimary: AppColors.onPrimary,
-            onSecondary: AppColors.onAccent,
-            onSurface: AppColors.textPrimary,
-            onBackground: AppColors.textPrimary,
-            outline: AppColors.border,
-            surfaceVariant: AppColors.surface,
-            error: AppColors.error,
-          ),
-
-          appBarTheme: const AppBarTheme(
-            backgroundColor: AppColors.surface,
-            foregroundColor: AppColors.textPrimary,
-            elevation: 0,
-            centerTitle: false,
-            titleTextStyle: TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              letterSpacing: -0.5,
-            ),
-            surfaceTintColor: Colors.transparent,
-          ),
-
-          cardTheme: CardThemeData(
-            color: AppColors.surface,
-            elevation: 1,
-            shadowColor: AppColors.shadowLight,
-            surfaceTintColor: Colors.transparent,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(12)),
-            ),
-          ),
-
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.onPrimary,
-              elevation: 0,
-              shadowColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-              textStyle: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.25,
-              ),
-            ),
-          ),
-
-          textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.primary,
-              textStyle: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.25,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
-            ),
-          ),
-
-          inputDecorationTheme: InputDecorationTheme(
-            filled: true,
-            fillColor: AppColors.surface,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.border),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.border),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.primary, width: 2),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.error, width: 2),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-            hintStyle: const TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 15,
-            ),
-            labelStyle: const TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 15,
-            ),
-          ),
-
-          textTheme: const TextTheme(
-            headlineLarge: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
-              letterSpacing: -0.8,
-            ),
-            headlineMedium: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-              letterSpacing: -0.4,
-            ),
-            headlineSmall: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-              letterSpacing: -0.2,
-            ),
-            bodyLarge: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textPrimary,
-              height: 1.5,
-            ),
-            bodyMedium: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textSecondary,
-              height: 1.4,
-            ),
-            bodySmall: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textSecondary,
-              height: 1.3,
-            ),
-          ),
-
-          dividerTheme: const DividerThemeData(
-            color: AppColors.divider,
-            thickness: 1,
-            space: 1,
-          ),
-          useMaterial3: true,
-        ),
-        home: const AuthWrapper(),
-        debugShowCheckedModeBanner: false,
-      ),
     );
   }
 }

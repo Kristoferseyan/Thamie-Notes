@@ -1,66 +1,68 @@
 import 'package:flutter/material.dart';
 
-/// App Colors
-///
-/// A centralized place for all color definitions used throughout the app.
-/// This makes it easy to maintain consistency and update colors globally.
 class AppColors {
-  // Private constructor to prevent instantiation
   AppColors._();
 
-  // Background Colors
-  static const Color background = Color(
-    0xFFFAFAFA,
-  ); // Soft white - Minimal, paper-like
+  static const Color _lightBackground = Color(0xFFFAFAFA);
+  static const Color _lightPrimary = Color(0xFF4A90E2);
+  static const Color _lightAccent = Color(0xFFF5A623);
+  static const Color _lightTextPrimary = Color(0xFF333333);
+  static const Color _lightTextSecondary = Color(0xFF888888);
+  static const Color _lightBorder = Color(0xFFE0E0E0);
+  static const Color _lightSurface = Colors.white;
 
-  // Primary Colors
-  static const Color primary = Color(
-    0xFF4A90E2,
-  ); // Calm blue - Headers, buttons
+  static const Color _darkBackground = Color(0xFF121212);
+  static const Color _darkPrimary = Color(0xFF6BA6F5);
+  static const Color _darkAccent = Color(0xFFFFB84D);
+  static const Color _darkTextPrimary = Color(0xFFE0E0E0);
+  static const Color _darkTextSecondary = Color(0xFFB0B0B0);
+  static const Color _darkBorder = Color(0xFF2A2A2A);
+  static const Color _darkSurface = Color(0xFF1E1E1E);
 
-  // Accent Colors
-  static const Color accent = Color(
-    0xFFF5A623,
-  ); // Warm amber - Flashcard highlights/quiz mode
-  static const Color flashcard = accent; // Alias for clarity
+  static bool _isDarkMode = false;
 
-  // Text Colors
-  static const Color textPrimary = Color(
-    0xFF333333,
-  ); // Near black - High readability
-  static const Color textSecondary = Color(
-    0xFF888888,
-  ); // Gray - Timestamps, secondary text
-  static const Color subtext = textSecondary; // Alias for clarity
+  static void setDarkMode(bool isDark) {
+    _isDarkMode = isDark;
+  }
 
-  // Border and Divider Colors
-  static const Color border = Color(
-    0xFFE0E0E0,
-  ); // Light gray - For separating note sections
-  static const Color divider = border; // Alias for clarity
+  static Color get background =>
+      _isDarkMode ? _darkBackground : _lightBackground;
+  static Color get primary => _isDarkMode ? _darkPrimary : _lightPrimary;
+  static Color get accent => _isDarkMode ? _darkAccent : _lightAccent;
+  static Color get flashcard => accent;
+  static Color get textPrimary =>
+      _isDarkMode ? _darkTextPrimary : _lightTextPrimary;
+  static Color get textSecondary =>
+      _isDarkMode ? _darkTextSecondary : _lightTextSecondary;
+  static Color get subtext => textSecondary;
+  static Color get border => _isDarkMode ? _darkBorder : _lightBorder;
+  static Color get divider => border;
+  static Color get surface => _isDarkMode ? _darkSurface : _lightSurface;
 
-  // Additional useful colors derived from the main palette
-  static const Color surface =
-      Colors.white; // Pure white for cards and surfaces
-  static const Color onPrimary = Colors.white; // Text on primary background
-  static const Color onAccent = Colors.white; // Text on accent background
-  static const Color error = Color(0xFFE53E3E); // Error states
-  static const Color success = Color(0xFF38A169); // Success states
-  static const Color warning = Color(0xFFD69E2E); // Warning states
+  static const Color onPrimary = Colors.white;
+  static const Color onAccent = Colors.white;
+  static const Color error = Color(0xFFE53E3E);
+  static const Color success = Color(0xFF38A169);
+  static const Color warning = Color(0xFFD69E2E);
 
-  // Light variants for subtle backgrounds
-  static Color primaryLight = primary.withOpacity(0.1);
-  static Color accentLight = accent.withOpacity(0.1);
-  static Color errorLight = error.withOpacity(0.1);
-  static Color successLight = success.withOpacity(0.1);
-  static Color warningLight = warning.withOpacity(0.1);
+  static Color get primaryLight => primary.withOpacity(0.1);
+  static Color get accentLight => accent.withOpacity(0.1);
+  static Color get errorLight => error.withOpacity(0.1);
+  static Color get successLight => success.withOpacity(0.1);
+  static Color get warningLight => warning.withOpacity(0.1);
 
-  // Darker variants for hover states
-  static Color primaryDark = const Color(0xFF3A7BC8);
-  static Color accentDark = const Color(0xFFE09900);
+  static Color get primaryDark =>
+      _isDarkMode ? const Color(0xFF5A96E8) : const Color(0xFF3A7BC8);
+  static Color get accentDark =>
+      _isDarkMode ? const Color(0xFFE6A532) : const Color(0xFFE09900);
 
-  // Shadow colors
-  static Color shadowLight = textPrimary.withOpacity(0.05);
-  static Color shadowMedium = textPrimary.withOpacity(0.1);
-  static Color shadowDark = textPrimary.withOpacity(0.15);
+  static Color get shadowLight => _isDarkMode
+      ? Colors.black.withOpacity(0.2)
+      : textPrimary.withOpacity(0.05);
+  static Color get shadowMedium => _isDarkMode
+      ? Colors.black.withOpacity(0.3)
+      : textPrimary.withOpacity(0.1);
+  static Color get shadowDark => _isDarkMode
+      ? Colors.black.withOpacity(0.4)
+      : textPrimary.withOpacity(0.15);
 }
