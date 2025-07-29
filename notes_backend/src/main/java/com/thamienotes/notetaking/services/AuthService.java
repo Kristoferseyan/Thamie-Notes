@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.thamienotes.notetaking.dtos.AuthDto;
-import com.thamienotes.notetaking.dtos.LoginResponseDto;
+import com.thamienotes.notetaking.dtos.Auth.AuthDto;
+import com.thamienotes.notetaking.dtos.Auth.LoginResponseDto;
 import com.thamienotes.notetaking.models.Users;
 import com.thamienotes.notetaking.repositories.UserRepo;
 import com.thamienotes.notetaking.securitystuff.JwtUtil;

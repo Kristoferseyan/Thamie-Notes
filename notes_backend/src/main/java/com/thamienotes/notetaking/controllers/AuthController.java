@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.thamienotes.notetaking.dtos.AuthDto;
-import com.thamienotes.notetaking.dtos.LoginResponseDto;
+import com.thamienotes.notetaking.dtos.Auth.AuthDto;
+import com.thamienotes.notetaking.dtos.Auth.LoginResponseDto;
 import com.thamienotes.notetaking.services.AuthService;
 
 import jakarta.validation.Valid;

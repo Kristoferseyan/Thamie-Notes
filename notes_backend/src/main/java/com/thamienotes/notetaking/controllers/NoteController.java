@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.thamienotes.notetaking.dtos.NoteDetailsDto;
+import com.thamienotes.notetaking.dtos.Note.NoteDetailsDto;
 import com.thamienotes.notetaking.services.NoteService;
 
 

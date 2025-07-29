@@ -3,7 +3,7 @@ package com.thamienotes.notetaking.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.thamienotes.notetaking.dtos.FolderDetailsDto;
+import com.thamienotes.notetaking.dtos.Folder.FolderDetailsDto;
 import com.thamienotes.notetaking.models.Folder;
 import com.thamienotes.notetaking.models.Notes;
 import com.thamienotes.notetaking.models.Users;

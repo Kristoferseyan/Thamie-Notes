@@ -1,4 +1,4 @@
-package com.thamienotes.notetaking.dtos;
+package com.thamienotes.notetaking.dtos.Note;
 
 import java.time.LocalDateTime;
 

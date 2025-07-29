@@ -9,7 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.thamienotes.notetaking.dtos.NoteDetailsDto;
+import com.thamienotes.notetaking.dtos.Note.NoteDetailsDto;
 import com.thamienotes.notetaking.mapper.NoteMapper;
 import com.thamienotes.notetaking.models.Notes;
 import com.thamienotes.notetaking.models.Users;
@@ -42,8 +42,7 @@ public class NoteService {
         
         note.setTitle(dto.getTitle());
         note.setContent(dto.getContent());
-
         Notes updateNotes = noteRepo.save(note);
-        return NoteMapper.toDto(note);
+        return NoteMapper.toDto(updateNotes);
     }
 }

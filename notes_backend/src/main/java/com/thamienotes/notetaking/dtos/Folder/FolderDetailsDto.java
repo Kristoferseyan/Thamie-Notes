@@ -1,6 +1,9 @@
-package com.thamienotes.notetaking.dtos;
+package com.thamienotes.notetaking.dtos.Folder;
 
 import java.util.List;
+
+import com.thamienotes.notetaking.dtos.Note.NoteDetailsDto;
+import com.thamienotes.notetaking.dtos.User.UserDto;
 
 import lombok.Getter;
 import lombok.Setter;

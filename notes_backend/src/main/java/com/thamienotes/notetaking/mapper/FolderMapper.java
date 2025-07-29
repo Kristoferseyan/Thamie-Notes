@@ -1,6 +1,6 @@
 package com.thamienotes.notetaking.mapper;
 
-import com.thamienotes.notetaking.dtos.FolderDto;
+import com.thamienotes.notetaking.dtos.Folder.FolderDto;
 import com.thamienotes.notetaking.models.Folder;
 import com.thamienotes.notetaking.models.Users;
 

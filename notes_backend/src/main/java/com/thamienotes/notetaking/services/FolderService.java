@@ -8,8 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.thamienotes.notetaking.dtos.FolderDetailsDto;
-import com.thamienotes.notetaking.dtos.FolderDto;
+import com.thamienotes.notetaking.dtos.Folder.FolderDetailsDto;
+import com.thamienotes.notetaking.dtos.Folder.FolderDto;
 import com.thamienotes.notetaking.mapper.FolderDetailsMapper;
 import com.thamienotes.notetaking.mapper.FolderMapper;
 import com.thamienotes.notetaking.models.Folder;

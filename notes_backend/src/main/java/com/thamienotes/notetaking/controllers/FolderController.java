@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.thamienotes.notetaking.dtos.FolderDetailsDto;
-import com.thamienotes.notetaking.dtos.FolderDto;
+import com.thamienotes.notetaking.dtos.Folder.FolderDetailsDto;
+import com.thamienotes.notetaking.dtos.Folder.FolderDto;
 import com.thamienotes.notetaking.services.FolderService;
 
 

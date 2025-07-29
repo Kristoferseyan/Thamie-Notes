@@ -1,4 +1,4 @@
-package com.thamienotes.notetaking.dtos;
+package com.thamienotes.notetaking.dtos.Auth;
 
 import lombok.Getter;
 import lombok.Setter;
