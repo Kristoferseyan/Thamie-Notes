@@ -13,4 +13,14 @@ public class UserMapper {
         user.setRole(dto.getRole());
         return user;
     }
+
+    public static UserDto toDto(Users user){
+        UserDto dto = new UserDto();
+        dto.setFirst_name(user.getFirst_name());
+        dto.setLast_name(user.getLast_name());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole());
+        return dto;
+    }
 }

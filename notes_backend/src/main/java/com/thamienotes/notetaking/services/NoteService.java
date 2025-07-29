@@ -23,8 +23,7 @@ public class NoteService {
 
     public NoteDetailsDto createNewNote(NoteDetailsDto dto){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        Users user = userRepo.findByUsername(username)
+        Users user = userRepo.findByUsername(auth.getName())
                                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
         Notes note = NoteMapper.toEntity(dto, user);
         Notes savedNote = noteRepo.save(note);
