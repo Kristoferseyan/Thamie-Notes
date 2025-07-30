@@ -10,7 +10,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.thamienotes.notetaking.dtos.Note.NoteDetailsDto;
+import com.thamienotes.notetaking.dtos.Note.NoteFolderDto;
 import com.thamienotes.notetaking.mapper.NoteMapper;
+import com.thamienotes.notetaking.models.Folder;
 import com.thamienotes.notetaking.models.Notes;
 import com.thamienotes.notetaking.models.Users;
 import com.thamienotes.notetaking.repositories.NoteRepo;
@@ -29,6 +31,24 @@ public class NoteService {
         Notes savedNote = noteRepo.save(note);
         return NoteMapper.toDto(savedNote);
     }
+
+public void addNoteToFolder(NoteFolderDto dto) {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+    Users user = userRepo.findByUsername(auth.getName())
+                         .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+
+    List<Notes> notes = noteRepo.findAllById(dto.getNoteIds());
+
+    Folder folder = new Folder();
+    folder.setId(dto.getFolderId());
+
+    for (Notes note : notes) {
+        note.setFolder(folder);
+    }
+
+    noteRepo.saveAll(notes);
+}
 
     public List<NoteDetailsDto> getUserNotes(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

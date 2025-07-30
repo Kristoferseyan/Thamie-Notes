@@ -24,11 +24,11 @@ public class FolderService {
 
 
     
-    public FolderDto createFolder(FolderDto dto){
+    public FolderDto createFolder(FolderDetailsDto dto){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Users user = userRepo.findByUsername(auth.getName())
         .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-        Folder folder = FolderMapper.toEntity(dto, user);
+        Folder folder = FolderDetailsMapper.toEntity(dto, user);
         Folder savedFolder = folderRepo.save(folder);
         return FolderMapper.toDto(savedFolder);
     }

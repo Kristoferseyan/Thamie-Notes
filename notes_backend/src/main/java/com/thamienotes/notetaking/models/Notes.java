@@ -39,6 +39,6 @@ public class Notes {
     private Users user;
 
     @ManyToOne
-    @JoinColumn(name="folder_id", nullable=false)
+    @JoinColumn(name="folder_id", nullable=true)
     private Folder folder;
 }

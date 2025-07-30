@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thamienotes.notetaking.dtos.Note.NoteDetailsDto;
+import com.thamienotes.notetaking.dtos.Note.NoteFolderDto;
 import com.thamienotes.notetaking.services.NoteService;
 
 
@@ -41,6 +42,13 @@ public class NoteController {
     public ResponseEntity<NoteDetailsDto> udpateNote(@PathVariable String noteId, @RequestBody NoteDetailsDto dto) {
         NoteDetailsDto updatedNote = noteService.updateNote(noteId, dto);
         return ResponseEntity.ok(updatedNote);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("addNotesToFolder")
+    public ResponseEntity<String> addNotesToFolder(@RequestBody NoteFolderDto dto) {
+        noteService.addNoteToFolder(dto);
+        return ResponseEntity.ok("Note added to folder");
     }
     
 }
