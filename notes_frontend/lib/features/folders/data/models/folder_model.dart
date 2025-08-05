@@ -1,21 +1,17 @@
-import '../../domain/entities/note.dart';
+import '../../domain/entities/folder.dart';
 
-class NoteModel extends Note {
-  const NoteModel({
+class FolderModel extends Folder {
+  const FolderModel({
     super.id,
     required super.title,
-    required super.content,
     super.createdAt,
     super.updatedAt,
-    super.userId,
-    super.folderId,
   });
 
-  factory NoteModel.fromJson(Map<String, dynamic> json) {
-    return NoteModel(
+  factory FolderModel.fromJson(Map<String, dynamic> json) {
+    return FolderModel(
       id: json['id'] as String?,
       title: json['title'] as String? ?? '',
-      content: json['content'] as String? ?? '',
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
           : (json['created_at'] != null
@@ -26,8 +22,6 @@ class NoteModel extends Note {
           : (json['updated_at'] != null
                 ? DateTime.parse(json['updated_at'] as String)
                 : null),
-      userId: json['userId'] as String? ?? json['user_id'] as String?,
-      folderId: json['folderId'] as String? ?? json['folder_id'] as String?,
     );
   }
 
@@ -35,23 +29,17 @@ class NoteModel extends Note {
     return {
       'id': id,
       'title': title,
-      'content': content,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
-      'userId': userId,
-      'folderId': folderId,
     };
   }
 
-  factory NoteModel.fromEntity(Note note) {
-    return NoteModel(
-      id: note.id,
-      title: note.title,
-      content: note.content,
-      createdAt: note.createdAt,
-      updatedAt: note.updatedAt,
-      userId: note.userId,
-      folderId: note.folderId,
+  factory FolderModel.fromEntity(Folder folder) {
+    return FolderModel(
+      id: folder.id,
+      title: folder.title,
+      createdAt: folder.createdAt,
+      updatedAt: folder.updatedAt,
     );
   }
 }

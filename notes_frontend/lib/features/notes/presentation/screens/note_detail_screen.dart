@@ -11,6 +11,9 @@ import '../bloc/notes_bloc.dart';
 import '../bloc/notes_event.dart';
 import '../bloc/notes_state.dart';
 import '../widgets/live_markdown_editor.dart';
+import '../../../folders/presentation/bloc/folder_bloc.dart';
+import '../../../folders/presentation/bloc/folder_event.dart';
+import '../../../folders/presentation/bloc/folder_state.dart';
 
 class NoteDetailScreen extends StatefulWidget {
   final Note? note;
@@ -35,6 +38,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>
   bool _hasChanges = false;
   bool _showToolbar = false;
   String _selectedHighlightColor = 'yellow';
+  String? _selectedFolderId;
   final FocusNode _titleFocusNode = FocusNode();
   final FocusNode _contentFocusNode = FocusNode();
 
@@ -46,6 +50,10 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>
     _contentController = TextEditingController(
       text: widget.note?.content ?? '',
     );
+    _selectedFolderId = widget.note?.folderId;
+
+    // Load folders for selection
+    context.read<FolderBloc>().add(FoldersLoadRequested());
 
     _toolbarAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -146,6 +154,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>
         NotesCreateRequested(
           title: _titleController.text.trim(),
           content: _contentController.text.trim(),
+          folderId: _selectedFolderId,
         ),
       );
     } else {
@@ -154,6 +163,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>
           id: widget.note!.id!,
           title: _titleController.text.trim(),
           content: _contentController.text.trim(),
+          folderId: _selectedFolderId,
         ),
       );
     }
@@ -920,6 +930,93 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>
               maxLines: null,
               textCapitalization: TextCapitalization.sentences,
             ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Folder Selection Dropdown
+          BlocBuilder<FolderBloc, FolderState>(
+            builder: (context, folderState) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white.withOpacity(0.1)
+                        : Colors.grey.withOpacity(0.2),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: isDark
+                          ? Colors.black26
+                          : Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: DropdownButtonFormField<String>(
+                  value: _selectedFolderId,
+                  decoration: InputDecoration(
+                    labelText: 'Folder',
+                    labelStyle: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.grey[600],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.folder_outlined,
+                      color: isDark ? Colors.white70 : Colors.grey[600],
+                      size: 20,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                  ),
+                  dropdownColor: isDark
+                      ? const Color(0xFF1A1A1A)
+                      : Colors.white,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black87,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  items: [
+                    DropdownMenuItem<String>(
+                      value: null,
+                      child: Text(
+                        'No folder',
+                        style: TextStyle(
+                          color: isDark ? Colors.white60 : Colors.grey[500],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                    ...folderState.folders.map((folder) {
+                      return DropdownMenuItem<String>(
+                        value: folder.id,
+                        child: Text(folder.title),
+                      );
+                    }),
+                  ],
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedFolderId = value;
+                      _hasChanges = true;
+                    });
+                  },
+                  hint: Text(
+                    'Select a folder (optional)',
+                    style: TextStyle(
+                      color: isDark ? Colors.white38 : Colors.grey,
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
 
           const SizedBox(height: 24),

@@ -10,7 +10,13 @@ class UpdateNoteUseCase {
     required String id,
     required String title,
     required String content,
+    String? folderId,
   }) async {
-    return await repository.updateNote(id: id, title: title, content: content);
+    return await repository.updateNote(
+      id: id,
+      title: title,
+      content: content,
+      folderId: folderId,
+    );
   }
 }

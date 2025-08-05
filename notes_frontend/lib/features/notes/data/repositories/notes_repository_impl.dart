@@ -21,11 +21,13 @@ class NotesRepositoryImpl implements NotesRepository {
   Future<Note> createNote({
     required String title,
     required String content,
+    String? folderId,
   }) async {
     try {
       final noteModel = await remoteDataSource.createNote(
         title: title,
         content: content,
+        folderId: folderId,
       );
       return noteModel;
     } catch (e) {
@@ -38,12 +40,14 @@ class NotesRepositoryImpl implements NotesRepository {
     required String id,
     required String title,
     required String content,
+    String? folderId,
   }) async {
     try {
       final noteModel = await remoteDataSource.updateNote(
         id: id,
         title: title,
         content: content,
+        folderId: folderId,
       );
       return noteModel;
     } catch (e) {

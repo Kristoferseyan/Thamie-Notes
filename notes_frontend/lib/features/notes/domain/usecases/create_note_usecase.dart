@@ -6,7 +6,15 @@ class CreateNoteUseCase {
 
   CreateNoteUseCase(this.repository);
 
-  Future<Note> call({required String title, required String content}) async {
-    return await repository.createNote(title: title, content: content);
+  Future<Note> call({
+    required String title,
+    required String content,
+    String? folderId,
+  }) async {
+    return await repository.createNote(
+      title: title,
+      content: content,
+      folderId: folderId,
+    );
   }
 }

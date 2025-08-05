@@ -6,6 +6,8 @@ class Note extends Equatable {
   final String content;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final String? userId;
+  final String? folderId;
 
   const Note({
     this.id,
@@ -13,6 +15,8 @@ class Note extends Equatable {
     required this.content,
     this.createdAt,
     this.updatedAt,
+    this.userId,
+    this.folderId,
   });
 
   Note copyWith({
@@ -21,6 +25,8 @@ class Note extends Equatable {
     String? content,
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? userId,
+    String? folderId,
   }) {
     return Note(
       id: id ?? this.id,
@@ -28,9 +34,19 @@ class Note extends Equatable {
       content: content ?? this.content,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      userId: userId ?? this.userId,
+      folderId: folderId ?? this.folderId,
     );
   }
 
   @override
-  List<Object?> get props => [id, title, content, createdAt, updatedAt];
+  List<Object?> get props => [
+    id,
+    title,
+    content,
+    createdAt,
+    updatedAt,
+    userId,
+    folderId,
+  ];
 }

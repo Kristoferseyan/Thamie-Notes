@@ -11,6 +11,7 @@ import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/bloc/auth_event.dart';
 import 'features/auth/presentation/bloc/auth_state.dart';
 import 'features/notes/presentation/bloc/notes_bloc.dart';
+import 'features/folders/presentation/bloc/folder_bloc.dart';
 import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/screens/home_screen.dart';
 
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
               create: (context) => di.sl<AuthBloc>()..add(AuthCheckRequested()),
             ),
             BlocProvider(create: (context) => di.sl<NotesBloc>()),
+            BlocProvider(create: (context) => di.sl<FolderBloc>()),
           ],
           child: Consumer<ThemeService>(
             builder: (context, themeService, child) {

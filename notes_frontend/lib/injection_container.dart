@@ -20,6 +20,14 @@ import 'features/notes/domain/usecases/update_note_usecase.dart';
 import 'features/notes/domain/usecases/delete_note_usecase.dart';
 import 'features/notes/presentation/bloc/notes_bloc.dart';
 
+import 'features/folders/data/datasources/folder_remote_data_source.dart';
+import 'features/folders/data/repositories/folder_repository_impl.dart';
+import 'features/folders/domain/repositories/folder_repository.dart';
+import 'features/folders/domain/usecases/get_folders.dart';
+import 'features/folders/domain/usecases/create_folder.dart';
+import 'features/folders/domain/usecases/delete_folder.dart';
+import 'features/folders/presentation/bloc/folder_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -35,13 +43,17 @@ Future<void> init() async {
   sl.registerLazySingleton<NotesRemoteDataSource>(
     () => NotesRemoteDataSourceImpl(client: sl(), sharedPreferences: sl()),
   );
-
-  // Repository
+  sl.registerLazySingleton<FolderRemoteDataSource>(
+    () => FolderRemoteDataSourceImpl(client: sl(), sharedPreferences: sl()),
+  ); // Repository
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(remoteDataSource: sl(), sharedPreferences: sl()),
   );
   sl.registerLazySingleton<NotesRepository>(
     () => NotesRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton<FolderRepository>(
+    () => FolderRepositoryImpl(remoteDataSource: sl()),
   );
 
   // Use cases
@@ -53,6 +65,9 @@ Future<void> init() async {
   sl.registerLazySingleton(() => CreateNoteUseCase(sl()));
   sl.registerLazySingleton(() => UpdateNoteUseCase(sl()));
   sl.registerLazySingleton(() => DeleteNoteUseCase(sl()));
+  sl.registerLazySingleton(() => GetFolders(sl()));
+  sl.registerLazySingleton(() => CreateFolder(sl()));
+  sl.registerLazySingleton(() => DeleteFolder(sl()));
 
   // BLoC
   sl.registerFactory(
@@ -70,5 +85,8 @@ Future<void> init() async {
       updateNoteUseCase: sl(),
       deleteNoteUseCase: sl(),
     ),
+  );
+  sl.registerFactory(
+    () => FolderBloc(getFolders: sl(), createFolder: sl(), deleteFolder: sl()),
   );
 }

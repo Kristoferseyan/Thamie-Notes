@@ -8,6 +8,11 @@ import '../../../notes/presentation/bloc/notes_event.dart';
 import '../../../notes/presentation/bloc/notes_state.dart';
 import '../../../notes/domain/entities/note.dart';
 import '../../../notes/presentation/screens/note_detail_screen.dart';
+import '../../../folders/presentation/bloc/folder_bloc.dart';
+import '../../../folders/presentation/bloc/folder_event.dart';
+import '../../../folders/presentation/bloc/folder_state.dart';
+import '../../../folders/domain/entities/folder.dart';
+import '../../../folders/presentation/screens/folder_screen.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 
@@ -27,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     context.read<NotesBloc>().add(NotesLoadRequested());
+    context.read<FolderBloc>().add(FoldersLoadRequested());
   }
 
   @override
@@ -151,37 +157,82 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(
-                          'FOLDERS',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onBackground.withOpacity(
-                              0.6,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'FOLDERS',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onBackground
+                                      .withOpacity(0.6),
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
                             ),
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                          ),
+                            IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const FolderScreen(),
+                                  ),
+                                );
+                              },
+                              icon: Icon(
+                                Icons.add,
+                                size: 16,
+                                color: theme.colorScheme.onBackground
+                                    .withOpacity(0.6),
+                              ),
+                              tooltip: 'Manage folders',
+                            ),
+                          ],
                         ),
                       ),
 
                       const SizedBox(height: 12),
 
-                      _buildNavItem(
-                        context,
-                        'Personal',
-                        Icons.folder_outlined,
-                        isSelected: _selectedTab == 'Personal',
-                      ),
-                      _buildNavItem(
-                        context,
-                        'Work',
-                        Icons.folder_outlined,
-                        isSelected: _selectedTab == 'Work',
-                      ),
-                      _buildNavItem(
-                        context,
-                        'Ideas',
-                        Icons.folder_outlined,
-                        isSelected: _selectedTab == 'Ideas',
+                      BlocBuilder<FolderBloc, FolderState>(
+                        builder: (context, folderState) {
+                          if (folderState.folders.isEmpty) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              child: Text(
+                                'No folders yet',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onBackground
+                                      .withOpacity(0.4),
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            );
+                          }
+
+                          return BlocBuilder<NotesBloc, NotesState>(
+                            builder: (context, notesState) {
+                              return Column(
+                                children: folderState.folders.map((folder) {
+                                  final noteCount = notesState.notes
+                                      .where(
+                                        (note) => note.folderId == folder.id,
+                                      )
+                                      .length;
+
+                                  return _buildNavItem(
+                                    context,
+                                    folder.title,
+                                    Icons.folder_outlined,
+                                    isSelected: _selectedTab == folder.title,
+                                    count: noteCount > 0 ? noteCount : null,
+                                  );
+                                }).toList(),
+                              );
+                            },
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -523,40 +574,97 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildMainContent(BuildContext context) {
-    return BlocConsumer<NotesBloc, NotesState>(
-      listener: (context, state) {
-        if (state.status == NotesStatus.created) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Note created successfully!'),
-              backgroundColor: AppColors.success,
-            ),
-          );
-        } else if (state.status == NotesStatus.error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message ?? 'An error occurred'),
-              backgroundColor: AppColors.error,
-            ),
-          );
-        }
-      },
-      builder: (context, state) {
-        if (state.status == NotesStatus.loading) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    return BlocBuilder<FolderBloc, FolderState>(
+      builder: (context, folderState) {
+        return BlocConsumer<NotesBloc, NotesState>(
+          listener: (context, state) {
+            if (state.status == NotesStatus.created) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Note created successfully!'),
+                  backgroundColor: AppColors.success,
+                ),
+              );
+            } else if (state.status == NotesStatus.error) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message ?? 'An error occurred'),
+                  backgroundColor: AppColors.error,
+                ),
+              );
+            }
+          },
+          builder: (context, state) {
+            if (state.status == NotesStatus.loading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-        if (state.notes.isEmpty) {
-          return _buildEmptyState(context);
-        }
+            final filteredNotes = _getFilteredNotes(state.notes, folderState);
 
-        return _buildNotesList(context, state.notes);
+            if (filteredNotes.isEmpty) {
+              return _buildEmptyState(
+                context,
+                isFiltered: _selectedTab != 'All Notes',
+              );
+            }
+
+            return _buildNotesList(context, filteredNotes);
+          },
+        );
       },
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  List<Note> _getFilteredNotes(List<Note> allNotes, FolderState folderState) {
+    if (_selectedTab == 'All Notes') {
+      return allNotes;
+    }
+
+    Folder? selectedFolder;
+    try {
+      selectedFolder = folderState.folders.firstWhere(
+        (folder) => folder.title == _selectedTab,
+      );
+    } catch (e) {
+      selectedFolder = null;
+    }
+
+    if (selectedFolder != null && selectedFolder.id != null) {
+      return allNotes.where((note) {
+        return note.folderId == selectedFolder!.id;
+      }).toList();
+    }
+
+    if (_selectedTab == 'Recent') {
+      final sortedNotes = List<Note>.from(allNotes);
+      sortedNotes.sort((a, b) {
+        final aDate = a.updatedAt ?? a.createdAt ?? DateTime.now();
+        final bDate = b.updatedAt ?? b.createdAt ?? DateTime.now();
+        return bDate.compareTo(aDate);
+      });
+      return sortedNotes.take(10).toList();
+    }
+
+    return allNotes;
+  }
+
+  Widget _buildEmptyState(BuildContext context, {bool isFiltered = false}) {
     final theme = Theme.of(context);
+
+    String title;
+    String subtitle;
+    IconData icon;
+
+    if (isFiltered) {
+      title = 'No notes in $_selectedTab';
+      subtitle = 'This folder is empty or no notes match the current filter.';
+      icon = Icons.folder_outlined;
+    } else {
+      title = 'Your story begins here';
+      subtitle =
+          'Create your first note and start building your\npersonal knowledge base.';
+      icon = Icons.auto_stories_outlined;
+    }
 
     return Container(
       padding: const EdgeInsets.all(40),
@@ -583,7 +691,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               child: Icon(
-                Icons.auto_stories_outlined,
+                icon,
                 size: 64,
                 color: AppColors.primary.withOpacity(0.7),
               ),
@@ -592,7 +700,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 32),
 
             Text(
-              'Your story begins here',
+              title,
               style: theme.textTheme.headlineMedium?.copyWith(
                 color: AppColors.textPrimary,
                 fontWeight: FontWeight.w700,
@@ -602,7 +710,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 12),
 
             Text(
-              'Create your first note and start building your\npersonal knowledge base.',
+              subtitle,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: AppColors.textSecondary,
                 height: 1.6,
@@ -612,55 +720,57 @@ class _HomeScreenState extends State<HomeScreen> {
 
             const SizedBox(height: 40),
 
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppColors.primary, AppColors.accent],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withOpacity(0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
+            if (!isFiltered) ...[
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppColors.primary, AppColors.accent],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton.icon(
+                  onPressed: () => _navigateToCreateNote(context),
+                  icon: const Icon(Icons.add, size: 20, color: Colors.white),
+                  label: const Text(
+                    'Create your first note',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 16,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildFeatureChip(Icons.search, 'Searchable'),
+                  const SizedBox(width: 12),
+                  _buildFeatureChip(Icons.cloud_sync, 'Synced'),
+                  const SizedBox(width: 12),
+                  _buildFeatureChip(Icons.security, 'Secure'),
                 ],
               ),
-              child: ElevatedButton.icon(
-                onPressed: () => _navigateToCreateNote(context),
-                icon: const Icon(Icons.add, size: 20, color: Colors.white),
-                label: const Text(
-                  'Create your first note',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 16,
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildFeatureChip(Icons.search, 'Searchable'),
-                const SizedBox(width: 12),
-                _buildFeatureChip(Icons.cloud_sync, 'Synced'),
-                const SizedBox(width: 12),
-                _buildFeatureChip(Icons.security, 'Secure'),
-              ],
-            ),
+            ],
           ],
         ),
       ),

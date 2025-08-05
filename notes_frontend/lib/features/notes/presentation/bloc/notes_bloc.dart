@@ -59,6 +59,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       final newNote = await createNoteUseCase(
         title: event.title,
         content: event.content,
+        folderId: event.folderId,
       );
       print('NotesBloc: Note created successfully: ${newNote.id}');
 
@@ -104,6 +105,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         id: event.id,
         title: event.title,
         content: event.content,
+        folderId: event.folderId,
       );
       print('NotesBloc: Note updated successfully: ${updatedNote.id}');
 
