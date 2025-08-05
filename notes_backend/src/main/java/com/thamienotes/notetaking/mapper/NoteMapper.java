@@ -28,14 +28,13 @@ public class NoteMapper {
         return dto;
     }
 
-    public static List<Notes> noteToFolderToEntity(NoteFolderDto dto, Users user){
+    public static List<Notes> noteToFolderToEntity(NoteFolderDto dto){
         Notes note = new Notes();
         Folder folder = new Folder();
         folder.setId(dto.getFolderId());
         return dto.getNoteIds()
                     .stream()
                     .map(noteId -> {
-                        note.setUser(user);
                         note.setId(noteId);
                         note.setFolder(folder);
                         return note;

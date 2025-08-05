@@ -12,8 +12,8 @@ class NoteModel extends Note {
   factory NoteModel.fromJson(Map<String, dynamic> json) {
     return NoteModel(
       id: json['id'] as String?,
-      title: json['title'] as String,
-      content: json['content'] as String,
+      title: json['title'] as String? ?? '',
+      content: json['content'] as String? ?? '',
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
           : null,

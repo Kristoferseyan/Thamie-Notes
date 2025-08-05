@@ -33,11 +33,6 @@ public class NoteService {
     }
 
 public void addNoteToFolder(NoteFolderDto dto) {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-    Users user = userRepo.findByUsername(auth.getName())
-                         .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-
     List<Notes> notes = noteRepo.findAllById(dto.getNoteIds());
 
     Folder folder = new Folder();
